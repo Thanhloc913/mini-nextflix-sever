@@ -1,0 +1,16 @@
+# Files/folders ignored in Docker build context
+node_modules
+npm-debug.log
+.pnpm-store
+Dockerfile
+.dockerignore
+.git
+.gitignore
+dist
+coverage
+**/*.tsbuildinfo
+.env
+.env.*
+
+
+
