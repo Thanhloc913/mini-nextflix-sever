@@ -11,6 +11,15 @@ class RefreshDto {
   refreshToken!: string;
 }
 
+class AdminLoginDto {
+  username!: string;
+  password!: string;
+}
+
+class AdminRefreshDto {
+  refreshToken!: string;
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -25,6 +34,18 @@ export class AuthController {
   @Post('refresh')
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refreshToken);
+  }
+
+  @Public()
+  @Post('admin/login')
+  adminLogin(@Body() dto: AdminLoginDto) {
+    return this.authService.loginAdmin(dto.username, dto.password);
+  }
+
+  @Public()
+  @Post('admin/refresh')
+  adminRefresh(@Body() dto: AdminRefreshDto) {
+    return this.authService.refreshAdmin(dto.refreshToken);
   }
 
   @Post('logout')

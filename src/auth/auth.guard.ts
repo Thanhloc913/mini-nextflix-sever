@@ -36,8 +36,9 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwt.verifyAsync(accessToken, {
         secret: process.env.JWT_SECRET || 'dev-secret',
       });
-      const userId = payload.sub;
-      const key = `access:${userId}:${accessToken}`;
+      const subjectId = payload.sub;
+      const kind = payload.kind || 'user';
+      const key = `access:${kind}:${subjectId}:${accessToken}`;
       const exists = await this.redis.get(key);
       if (!exists) {
         throw new UnauthorizedException('Access token expired');
