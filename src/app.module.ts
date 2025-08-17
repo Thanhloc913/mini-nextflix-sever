@@ -5,6 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminsModule } from './admins/admins.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { MoviesModule } from './movies/movies.module';
+import { GenresModule } from './genres/genres.module';
+import { CommentsModule } from './comments/comments.module';
+import { EpisodesModule } from './episodes/episodes.module';
+import { FavoritesModule } from './favorites/favorites.module';
 import { Admin } from './admins/admin.entity';
 import { User } from './users/user.entity';
 import { Movie } from './movies/movie.entity';
@@ -30,6 +35,11 @@ import { Episode } from './episodes/episode.entity';
     AdminsModule,
     UsersModule,
     AuthModule,
+    MoviesModule,
+    GenresModule,
+    CommentsModule,
+    EpisodesModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

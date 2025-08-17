@@ -126,3 +126,276 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+docker-compose exec app pnpm run migration:generate
+docker-compose exec app pnpm run migration:run
+
+🚀 Chức năng KHÔNG cần đăng nhập (guest)
+
+Xem danh sách phim (movies, genres, movie_genres)
+→ Ai cũng xem được list phim, lọc theo thể loại, rating.
+
+Xem chi tiết phim (movies, episodes nếu là series)
+→ Ai cũng xem được description, trailer/video, episodes.
+
+Xem comment (comments)
+→ Ai cũng đọc được bình luận của user khác (chỉ không post được).
+
+👤 Chức năng User (đã đăng nhập)
+
+Comment phim (comments)
+→ Thêm comment với user_id.
+
+Yêu thích phim (favorites)
+→ Thêm / xóa phim khỏi danh sách favorite của mình.
+
+Quản lý tài khoản cá nhân (users)
+→ Đăng ký, đăng nhập, đổi mật khẩu.
+
+👑 Chức năng Admin
+
+Upload phim mới (movies)
+→ Thêm mới, update, soft delete (deleted_at).
+
+Quản lý episode (episodes)
+→ Thêm tập mới, sửa, xóa.
+
+Quản lý user (users)
+→ Ban / unblock, soft delete (deleted_at).
+
+Quản lý comment (comments)
+→ Xóa comment không phù hợp.
+
+✅ Tóm lại:
+
+Guest: chỉ được xem phim + xem comment.
+
+User: ngoài xem phim, còn comment + yêu thích.
+
+Admin: full quyền quản lý content + user.
+
+## API Documentation (Postman Guide)
+
+### Base URL and Headers
+
+- Base URL: `http://localhost:3000`
+- Default headers for JSON requests:
+
+```http
+Content-Type: application/json
+```
+
+- Authorization for protected endpoints:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+Access tokens are cached in Redis. If 401 Invalid/Expired token, call refresh to get a new access token, then retry.
+
+### Auth
+
+- POST `auth/login` (Public)
+  - Body:
+
+```json
+{ "username": "user1", "password": "secret" }
+```
+
+  - Response:
+
+```json
+{ "accessToken": "...", "refreshToken": "..." }
+```
+
+- POST `auth/refresh` (Public)
+  - Body:
+
+```json
+{ "refreshToken": "..." }
+```
+
+  - Response: same as login
+
+- POST `auth/admin/login` (Public)
+  - Body:
+
+```json
+{ "username": "admin1", "password": "secret" }
+```
+
+  - Response: tokens
+
+- POST `auth/admin/refresh` (Public)
+  - Body `{ "refreshToken": "..." }`, response tokens
+
+- POST `auth/logout` (Protected)
+  - Response:
+
+```json
+{ "success": true }
+```
+
+### Movies
+
+- GET `movies` (Public) — List with filters and pagination
+  - Query params (optional): `genreId`, `ratingMin`, `ratingMax`, `q`, `page`, `limit`
+  - Response: array of movies
+
+- GET `movies/:id` (Public) — Movie detail (includes genres, episodes)
+  - Response example:
+
+```json
+{
+  "movieId": 1,
+  "title": "Example",
+  "description": "...",
+  "releaseDate": "2024-01-01",
+  "duration": 120,
+  "rating": 8.5,
+  "posterUrl": null,
+  "videoUrl": null,
+  "uploadedBy": "<adminId>",
+  "createdAt": "2025-01-01T00:00:00.000Z",
+  "updatedAt": "2025-01-02T00:00:00.000Z",
+  "genres": [{ "genreId": 1, "name": "Action" }],
+  "episodes": [{ "episodeId": 10, "title": "Ep 1", "episodeNo": 1, "duration": 45, "videoUrl": null }]
+}
+```
+
+- POST `movies` (Admin)
+  - Headers: Authorization Bearer admin access token
+  - Body:
+
+```json
+{
+  "title": "New Movie",
+  "description": "...",
+  "releaseDate": "2025-01-01",
+  "duration": 100,
+  "rating": 7.2,
+  "posterUrl": "...",
+  "videoUrl": "...",
+  "genreIds": [1, 2]
+}
+```
+
+- PATCH `movies/:id` (Admin) — Body like POST but all fields optional
+
+- DELETE `movies/:id` (Admin) — Soft delete
+
+### Genres
+
+- GET `genres` (Public)
+- POST `genres` (Admin)
+  - Body: `{ "name": "Action" }`
+- PATCH `genres/:id` (Admin)
+  - Body: `{ "name": "Adventure" }`
+
+### Comments
+
+- GET `comments/movie/:movieId` (Public) — List comments for a movie
+  - Response example:
+
+```json
+[
+  {
+    "commentId": "uuid",
+    "content": "Great movie!",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "user": { "userId": "uuid", "username": "user1" }
+  }
+]
+```
+
+- POST `comments` (User)
+  - Headers: Authorization Bearer user access token
+  - Body:
+
+```json
+{ "movieId": 1, "content": "Great movie!" }
+```
+
+- DELETE `comments/:id` (Owner or Admin)
+
+### Episodes (Admin)
+
+- POST `episodes`
+  - Body:
+
+```json
+{ "movieId": 1, "title": "Episode 1", "videoUrl": null, "duration": 45, "episodeNo": 1 }
+```
+
+- PATCH `episodes/:id` — Body fields optional
+- DELETE `episodes/:id`
+
+### Favorites (User)
+
+- GET `favorites/me`
+- POST `favorites/:movieId`
+- DELETE `favorites/:movieId`
+
+### Users
+
+- POST `users`
+  - Body:
+
+```json
+{ "username": "user1", "email": "user1@example.com", "password": "secret" }
+```
+
+- GET `users`
+- GET `users/:id`
+- PATCH `users/:id`
+  - Body (any subset): `{ "email": "new@example.com", "password": "newpass" }`
+- DELETE `users/:id` (soft delete)
+
+Note: All user endpoints are protected by the global auth guard. If you want public self-registration, mark `@Public()` on `POST /users` in `UsersController`.
+
+### Admins (Admin)
+
+- POST `admins` — Create admin `{ "username": "admin2", "password": "secret", "role": "admin" }`
+- GET `admins`
+- GET `admins/:id`
+- PATCH `admins/:id` — Update password/role
+- DELETE `admins/:id` (soft delete)
+
+### Common error responses
+
+- 400 Bad Request — Invalid payload
+- 401 Unauthorized — Missing/invalid/expired access token (call refresh)
+- 403 Forbidden — Not enough permissions (requires admin or owner)
+- 404 Not Found — Resource not found
+
+### Postman Quick Start
+
+1) Login to get tokens
+
+```http
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{ "username": "user1", "password": "secret" }
+```
+
+Save `accessToken` and `refreshToken` to Postman variables.
+
+2) Call a protected endpoint
+
+```http
+GET {{baseUrl}}/favorites/me
+Authorization: Bearer {{accessToken}}
+```
+
+3) If 401, refresh token
+
+```http
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "{{refreshToken}}" }
+```
+
+Update `accessToken` with the new value and retry.

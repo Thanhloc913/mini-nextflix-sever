@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { User } from '../users/user.entity';
+import { Admin } from '../admins/admin.entity';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { AuthController } from './auth.controller';
@@ -11,7 +12,7 @@ import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Admin]),
     UsersModule,
     RedisModule,
     JwtModule.register({

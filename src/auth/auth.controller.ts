@@ -1,24 +1,12 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
-
-class LoginDto {
-  username!: string;
-  password!: string;
-}
-
-class RefreshDto {
-  refreshToken!: string;
-}
-
-class AdminLoginDto {
-  username!: string;
-  password!: string;
-}
-
-class AdminRefreshDto {
-  refreshToken!: string;
-}
+import type {
+  LoginDto,
+  RefreshDto,
+  AdminLoginDto,
+  AdminRefreshDto,
+} from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
