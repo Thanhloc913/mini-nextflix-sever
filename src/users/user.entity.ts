@@ -23,6 +23,9 @@ export class User {
   @Column({ name: 'password_hash', type: 'varchar', length: 256 })
   passwordHash!: string;
 
+  @Column({ name: 'avatar_url', type: 'varchar', length: 2048 })
+  avatarURL!: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt!: Date;
 

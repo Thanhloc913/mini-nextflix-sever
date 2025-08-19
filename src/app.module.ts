@@ -17,6 +17,7 @@ import { Genre } from './genres/genre.entity';
 import { Comment } from './comments/comment.entity';
 import { Favorite } from './favorites/favorite.entity';
 import { Episode } from './episodes/episode.entity';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { Episode } from './episodes/episode.entity';
     CommentsModule,
     EpisodesModule,
     FavoritesModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

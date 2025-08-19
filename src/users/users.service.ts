@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,6 +18,9 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
+    if (!dto.avatarURL || dto.avatarURL.trim().length === 0) {
+      throw new BadRequestException('avatarURL is required');
+    }
     const existingByUsername = await this.userRepo.findOne({
       where: { username: dto.username },
     });
@@ -34,6 +38,7 @@ export class UsersService {
       username: dto.username,
       email: dto.email,
       passwordHash,
+      avatarURL: dto.avatarURL,
     });
     return this.userRepo.save(user);
   }
@@ -61,6 +66,9 @@ export class UsersService {
     }
     if (dto.password) {
       user.passwordHash = await bcrypt.hash(dto.password, 10);
+    }
+    if (dto.avatarURL) {
+      user.avatarURL = dto.avatarURL;
     }
     return this.userRepo.save(user);
   }

@@ -37,6 +37,7 @@ services:
       DB_LOGGING: "true"
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
     ports:
       - "3000:3000"
 

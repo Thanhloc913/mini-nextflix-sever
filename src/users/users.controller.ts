@@ -9,12 +9,14 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { CreateUserDto, UpdateUserDto } from './user.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Public()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
   }
@@ -39,4 +41,3 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 }
-

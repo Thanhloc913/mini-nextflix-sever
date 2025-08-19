@@ -24,6 +24,7 @@
     "migration:revert": "node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js -d src/database/data-source.ts migration:revert"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.28.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",

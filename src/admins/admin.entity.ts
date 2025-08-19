@@ -17,6 +17,9 @@ export class Admin {
   @Column({ name: 'password_hash', type: 'varchar', length: 256 })
   passwordHash!: string;
 
+  @Column({ name: 'avatar_url', type: 'varchar', length: 2048 })
+  avatarURL!: string;
+
   @Column({ type: 'varchar', length: 50 })
   role!: 'admin' | 'superadmin';
 

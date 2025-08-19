@@ -1,9 +1,17 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Movie } from './movie.entity';
 import { Genre } from '../genres/genre.entity';
-import type { CreateMovieDto, MovieQueryDto, UpdateMovieDto } from './movies.dto';
+import type {
+  CreateMovieDto,
+  MovieQueryDto,
+  UpdateMovieDto,
+} from './movies.dto';
 
 @Injectable()
 export class MoviesService {
@@ -46,7 +54,10 @@ export class MoviesService {
     return movie;
   }
 
-  async create(dto: CreateMovieDto, actor: { kind: 'user' | 'admin'; sub: string }) {
+  async create(
+    dto: CreateMovieDto,
+    actor: { kind: 'user' | 'admin'; sub: string },
+  ) {
     if (actor.kind !== 'admin') throw new ForbiddenException('Admin only');
     const movie = this.movieRepo.create({
       title: dto.title,
@@ -87,5 +98,3 @@ export class MoviesService {
     await this.movieRepo.softDelete({ movieId: id });
   }
 }
-
-
